@@ -4,7 +4,9 @@ Link to visualization: https://hsinpaohuang.github.io/2019_Indy_Big_Data/
 
 # References
 
-World Choropleth: http://bl.ocks.org/palewire/d2906de347a160f38bc0b7ca57721328
+Choropleth: http://bl.ocks.org/palewire/d2906de347a160f38bc0b7ca57721328 
+
+Population pyramid with Google Charts: http://jsfiddle.net/orian/dnenjgkg/
 
 d3-tip.js: https://github.com/Caged/d3-tip
 
