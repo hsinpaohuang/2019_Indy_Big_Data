@@ -1,0 +1,664 @@
+// Copyright 2004 Software FX Inc.
+
+var SFX_currentIconOver = "";
+var SFX_currentMenuOn = 0;
+var SFX_currentxAdd =0;
+var SFX_currentyAdd =0;
+var SFX_currentRightClick = "";
+var SFX_currentUIObjectId = "";
+var SFX_currentRightClickY = 0;
+var SFX_currentRightClickX = 0;
+var SFX_currentThirdLevelMenu = "";
+var SFX_currentThirdLevelMenuOn = 0;
+var SFX_currentChartName = "";
+var SFX_delayedThirdLevelMenu = "";
+var SFX_timerIntervalThirdLevel = "";
+var SFX_onCallbackReadyDelegate;
+var SFX_userCallbackResult = "";
+var SFX_useWebServiceForCallbacks = false;
+var SFX_xmlHttpHandler = null;
+var SFX_callbackWebServiceUrl = "/chartfx70/callbackservice/service.asmx/";
+var SFX_newImage = null;
+var SFX_processing = false;
+
+var UIOBJECT_SEPARATOR = '|';
+var SPECIAL_COMMAND_PREFIX = '*';
+var RESPONSE_SEPARATOR = '|';
+var SUBCOMMAND_SEPARATOR = ',';
+
+var REGULAR_RESPONSE_PREFIX = '#';
+var SPECIAL_RESPONSE_PREFIX = '*';
+var ERROR_RESPONSE_PREFIX = '!';
+
+var SPECIAL_COMMAND_EXPORTDATA = 'D';
+var SPECIAL_COMMAND_SETFONT = 'F';
+
+var SFX_isIE = navigator.appName=="Microsoft Internet Explorer";
+
+function MM_findObj(n, d) 
+{ //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function SFX_NOP () 
+{
+	return false;
+}
+
+function SFX_SetDivVisibility (divName, visible)
+{
+    return SFX_SetVisibility("SFXdiv-" + divName,visible);
+}
+
+function SFX_SetVisibility (objName, visible) 
+{ 
+    var obj = MM_findObj(objName);
+    SFX_SetObjectVisibility(obj,visible);
+    return obj;
+}
+
+function SFX_SetObjectVisibility (obj, visible)
+{
+    if (obj == null)
+        return;
+        
+	if (obj.style != null) {
+		obj.style.visibility = visible ? 'visible' : 'hidden';
+	} else
+	    obj.visibility = visible ? 'show' : 'hide';
+}
+
+function SFX_ChangeDivPosition (divName,xPos,yPos,absolutePosition) 
+{
+	if (!absolutePosition) {
+		var obj = MM_findObj(SFX_currentChartName);
+		while (obj) {
+			if (obj.style.position == "absolute")
+				break;
+		    xPos += obj.offsetLeft
+		    yPos += obj.offsetTop;
+		    obj = obj.offsetParent;
+	    }
+	}
+	
+	return SFX_MoveLayer("SFXdiv-" + divName, xPos, yPos);
+}
+
+function SFX_ShowDivAt (divName,xPos,yPos,absolutePosition)
+{
+	var obj = SFX_ChangeDivPosition(divName,xPos,yPos,absolutePosition);
+	SFX_SetObjectVisibility(obj,true);
+	return obj;
+}
+
+function SFX_ShowIconOver (chartName,iconName,xAdd,yAdd,width,height,absolutePosition,sender)
+{
+	if (SFX_currentMenuOn==0) {
+		SFX_currentChartName = chartName;
+    	SFX_HideIconOver();
+
+        if (SFX_isIE) {
+            xAdd++;
+            yAdd++;
+            width--;
+            height -= 2;
+        } 
+        
+		var obj = SFX_ShowDivAt(iconName,xAdd,yAdd,absolutePosition);
+		if (obj != null) {
+            obj.style.width = width.toString() + "px";
+            obj.style.height = height.toString() + "px";
+            
+            if (sender)
+                obj.onclick = sender.onclick;
+		}
+		SFX_currentIconOver = iconName;
+	} 
+}
+
+function SFX_OnChartContextMenu ()
+{
+    if (SFX_currentRightClick != "") {
+        SFX_ShowDivAt('menu' + SFX_currentRightClick, SFX_currentRightClickX, SFX_currentRightClickY, true);
+        return false;
+    }
+    return true;
+}
+
+function SFX_GetMouseX (e) 
+{
+    var x = e.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft);
+	var obj = e.target ? e.target : e.srcElement;
+	while (obj) {
+		if (obj.style && (obj.style.position === "absolute")) {
+			x -= parseInt(obj.style.left);
+			break;
+		}
+		obj = obj.parentNode;
+	}
+    return x;
+}
+
+function SFX_GetMouseY (e) 
+{
+	var y = e.clientY + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop);
+	var obj = e.target ? e.target : e.srcElement;
+	while (obj) {
+		if (obj.style && (obj.style.position === "absolute")) {
+			y -= parseInt(obj.style.top);
+			break;
+		}
+		obj = obj.parentNode;
+	}
+    return y;
+}
+
+function SFX_SetRightClickMenu (e,chartName,menuName,prefix) 
+{
+	SFX_ClearLayers();
+	
+	var immediate = true;
+    if (!e) {
+        e = window.event; // IE 6
+        immediate = false;
+    }
+
+	if ((e.button & 2) == 0)
+	    return true;
+
+	SFX_currentChartName = chartName;
+	SFX_currentUIObjectId = prefix;
+    SFX_currentRightClick = menuName;
+    SFX_currentRightClickX = SFX_GetMouseX(e);
+    SFX_currentRightClickY = SFX_GetMouseY(e);
+    
+    if (immediate)
+        return SFX_OnChartContextMenu();
+    
+	return false;
+}
+
+function SFX_HideRightClickMenu ()
+{
+	if(SFX_currentRightClick != ""){
+		SFX_SetDivVisibility('menu'+SFX_currentRightClick,false);
+		SFX_currentRightClick = "";
+	}
+}
+
+function SFX_ShowToolbarMenuAbsolute (commandName,xPos,yPos,width,height)
+{
+	xPos = parseInt(xPos);
+	yPos = parseInt(yPos);
+    width = parseInt(width);
+    height = parseInt(height);
+    SFX_ShowToolbarMenu(SFX_currentChartName,commandName,xPos,yPos,width,height,true);
+}
+
+function SFX_ShowToolbarMenu (chartName,commandName,xPos,yPos,width,height,absolutePosition)
+{
+	SFX_currentChartName = chartName;
+	SFX_ClearLayers();
+	SFX_ShowIconOver(chartName,commandName,xPos,yPos,width,height,absolutePosition);
+	SFX_ShowContextMenu(commandName,xPos,yPos + height,absolutePosition);
+}
+
+function SFX_ShowContextMenu (iconName,xPos,yPos,absolutePosition)
+{
+	SFX_currentUIObjectId = "";
+	SFX_HideRightClickMenu();
+	if(SFX_currentMenuOn!=0 && SFX_currentIconOver == iconName){
+		SFX_HideContextMenu();
+	}else{
+		SFX_ShowDivAt('menu'+iconName,xPos,yPos,absolutePosition);
+		SFX_currentMenuOn = 1;
+	}
+}
+
+function SFX_ShowSubMenu (iconName,caller) 
+{
+	var xAdd = parseInt(caller.offsetWidth) + 2;
+	var yAdd = parseInt(caller.offsetTop);
+	SFX_HideThirdLevelMenu();
+	SFX_ShowDivAt('menu'+iconName,SFX_currentRightClickX + xAdd, SFX_currentRightClickY + yAdd,true);
+	SFX_currentThirdLevelMenuOn = 1;
+	SFX_currentThirdLevelMenu=iconName;
+}
+
+function SFX_HideContextMenu()
+{
+	SFX_SetDivVisibility('menu'+SFX_currentIconOver,false);
+	SFX_currentMenuOn = 0;
+}
+
+function SFX_HideThirdLevelMenu()
+{
+	if (SFX_timerIntervalThirdLevel != "") {
+		window.clearInterval(SFX_timerIntervalThirdLevel);
+		SFX_timerIntervalThirdLevel = ""
+	}
+	SFX_SetDivVisibility('menu'+SFX_currentThirdLevelMenu,false);
+	SFX_currentThirdLevelMenuOn = 0;
+	SFX_currentThirdLevelMenu = "";
+	SFX_delayedThirdLevelMenu = "";
+}
+
+function SFX_HideThirdLevelMenuDelayed (iconName)
+{
+	if (iconName != SFX_currentThirdLevelMenu) {
+		SFX_delayedThirdLevelMenu = SFX_currentThirdLevelMenu;
+		if (SFX_timerIntervalThirdLevel == "")
+			SFX_timerIntervalThirdLevel = window.setInterval("SFX_ThirdLevelMenuTimer()",100);
+	}
+}
+
+function SFX_ThirdLevelMenuTimer ()
+{
+	if (SFX_delayedThirdLevelMenu == SFX_currentThirdLevelMenu) {
+		window.clearInterval(SFX_timerIntervalThirdLevel);
+		SFX_HideThirdLevelMenu();
+	}
+}
+
+function SFX_HideIconOver()
+{
+	if ((SFX_currentMenuOn == 0) && (SFX_currentIconOver != "")) {
+		SFX_SetDivVisibility(SFX_currentIconOver,false);
+		SFX_currentIconOver="";
+	}
+}
+
+function SFX_ClearLayers()
+{
+	SFX_HideContextMenu();
+	SFX_HideRightClickMenu();
+	SFX_HideThirdLevelMenu()
+}
+
+function SFX_MoveLayer(objName, xPos, yPos) 
+{
+	// Given object name, x & y position, adjust object to new top left
+	var obj = MM_findObj(objName);
+	
+	if (obj == null)
+	    return null;
+	
+	obj.style.left = xPos.toString() + "px";
+	obj.style.top = yPos.toString() + "px";
+	
+	return obj;
+}
+
+function SFX_OnCallbackError (param,context) 
+{
+    SFX_processing = false;
+	alert('An error has occurred.\n'+param);
+}
+
+function SFX_OnCallbackReady (param,context,actionMethod) 
+{
+	SFX_currentChartName = context;
+	
+	var responseCode = param.substring(0,1);
+	param = param.substring(1);
+	
+	// Error
+	if (responseCode == ERROR_RESPONSE_PREFIX) {
+        SFX_processing = false;
+		alert('An error has occurred.\n'+param);
+		return;
+	}
+	
+	// Special command
+    if (responseCode == SPECIAL_RESPONSE_PREFIX) {
+		switch (param.substring(0,1)) {
+			case SPECIAL_COMMAND_EXPORTDATA:
+				if (window.clipboardData)
+					window.clipboardData.setData('text', param.substring(1));
+				else
+					alert('Sorry, your browser does not support this feature.');
+		}
+    } else {
+	    var sep1 = param.indexOf(RESPONSE_SEPARATOR);
+        SFX_currentChartName = context = param.substring(0,sep1);
+        var sep2 = param.indexOf(RESPONSE_SEPARATOR,sep1+1);
+        var methodSufix = param.substring(sep1+1,sep2);
+        var sep3 = param.indexOf(RESPONSE_SEPARATOR,sep2+1);
+        var viewState = param.substring(sep2+1,sep3);
+        var sep4 = param.indexOf(RESPONSE_SEPARATOR,sep3+1);
+        var url = param.substring(sep3+1,sep4);
+        var sep5 = param.indexOf(RESPONSE_SEPARATOR,sep4+1);
+        SFX_userCallbackResult = param.substring(sep4+1,sep5);
+        var map = param.substring(sep5+1);
+
+        // Upate viewstate
+        var viewStateObj = MM_findObj('__' + context + '_VIEWSTATE');
+        viewStateObj.value = viewState;	   
+
+        SFX_RefreshCallbackData();
+        
+        var methodCall;
+        if (actionMethod)
+            methodCall = actionMethod + methodSufix + "(context,url,map);";
+        else
+            methodCall = "SFX_ProcessResponse" + methodSufix + "(context,url,map);";
+        eval(methodCall);
+	}
+	
+	SFX_currentUIObjectId = "";
+    SFX_processing = false;
+}
+
+function SFX_ProcessResponseImage (context, url, map)
+{
+    // trim off <map> and </map>
+    var sep1 = map.indexOf('>');
+    map = map.substring(sep1+1,map.length-7);
+    
+    SFX_ReplaceImage(context,url,map);
+}
+
+function SFX_ProcessResponseActiveX (context, url, map)
+{
+	var obj = MM_findObj(context);
+	
+	if (url.substring(0,1) == '#')
+	    obj.EmbeddedData = url.substring(2);
+	else
+    	obj.DataPath = url;
+    SFX_CallCallbackReadyDelegate(context);
+}
+
+function SFX_ProcessResponseFlash (context, url, map)
+{
+    var obj;
+    if (document.embeds)
+        obj = document.embeds.namedItem(context);
+        
+    if (!obj)
+	    obj = MM_findObj(context);
+	
+	obj.LoadMovie(0,url);
+    SFX_CallCallbackReadyDelegate(context);
+}
+
+function SFX_ProcessResponseSVG (context, url, map)
+{
+    var obj;
+    if (document.embeds)
+        obj = document.embeds.namedItem(context);
+        
+    if (!obj)
+	    obj = MM_findObj(context);
+
+    if (SFX_isIE)
+        obj.src = url;
+    else {
+        var replacement = obj.cloneNode(true);
+        replacement.src = url; 
+        obj.parentNode.replaceChild(replacement,obj); 
+    }
+    
+    SFX_CallCallbackReadyDelegate(context);
+}
+
+function SFX_ProcessResponseChartAsText (context, url, map)
+{
+    SFX_ProcessResponseImage(context,url,map);
+    // TODO: Update Text Chart (Accessibility)
+    // trim off <map> and </map>
+    var sep1 = map.indexOf('>');
+    map = map.substring(sep1+1,map.length-7);
+    
+    SFX_ReplaceImage(context,url,map);
+}
+
+function SFX_RefreshCallbackData ()
+{
+    __theFormPostData = "";
+    __theFormPostCollection = new Array();
+    WebForm_InitCallback();
+}
+
+function SFX_ReplaceImage (context, url, map) 
+{
+    var mapObj = MM_findObj(context+'Map');
+    if (mapObj)
+	    mapObj.innerHTML = map;
+
+	var imageObj = MM_findObj(context);
+	
+    if (SFX_isIE) {
+        // Prevent flickering
+        var newImage = imageObj.cloneNode(false);
+        SFX_newImage = newImage;
+        newImage.onreadystatechange = SFX_OnImageDownloaded;
+        newImage.src = url;
+    } else {
+	    imageObj.src = url;
+	    SFX_CallCallbackReadyDelegate(context);
+    }
+}
+
+function SFX_OnImageDownloaded ()
+{
+    if (SFX_newImage == null)
+        return;
+    
+    if (SFX_newImage.readyState == 'complete') {
+        SFX_newImage.onreadystatechange = null;
+        var oldImage = MM_findObj(SFX_newImage.id);
+        if (oldImage != null)
+            oldImage.swapNode(SFX_newImage);
+        SFX_CallCallbackReadyDelegate(SFX_newImage.id);
+        SFX_newImage = null;
+    }
+}
+
+function SFX_CallCallbackReadyDelegate (chartId)
+{
+    if (SFX_onCallbackReadyDelegate)
+        SFX_onCallbackReadyDelegate(chartId,SFX_userCallbackResult);
+}
+
+function SFX_SendChartCommand (chartName, command, postback) 
+{
+    SFX_currentChartName = chartName;
+    SFX_currentUIObjectId = "";
+    SFX_SendCommand(command,postback);
+}
+
+function SFX_SendCommand (command, postback) 
+{
+	SFX_ClearLayers();
+    SFX_SendAction(SFX_currentChartName,'A',command + UIOBJECT_SEPARATOR + SFX_currentUIObjectId,postback);
+}
+
+function SFX_SendCommandContext (command, context, postback)
+{
+	SFX_currentUIObjectId = context;
+    SFX_SendCommand(command,postback);
+}
+
+function SFX_SendUserCallback (chartName, param, postback) 
+{
+    SFX_SendAction(chartName,'U',param,postback);
+}
+
+function SFX_SendAction (chartName, actionCode, actionParam, postback) 
+{
+    if (SFX_processing)
+        return;
+    
+    //JAVA specific hack:
+    //Include an extra parameter to differentiate chart callback from user submit on the same form.
+    if(__theFormPostData) {
+    	__theFormPostData += "CHART_CALLBACK_FLAG=TRUE&";    	
+    }
+    
+    var encodedAction = actionCode + ':' + actionParam;
+    if (postback)
+        SFX_PostBack(chartName,encodedAction);
+    else {
+        SFX_processing = true;
+        if (SFX_useWebServiceForCallbacks)
+            SFX_CallbackWebService(chartName,encodedAction);
+        else
+            SFX_Callback(chartName,encodedAction);
+    }    
+}
+
+function SFX_CallbackWebService (context, encodedCommand)
+{
+    SFX_InvokeWebService(context,'ExecuteAction',SFX_OnCallbackWebServiceReady,encodedCommand);
+}
+
+function SFX_InvokeWebService (context, methodName, responseHandler, action)
+{
+    var viewStateObj = MM_findObj('__' + context + '_VIEWSTATE');
+    var viewState= viewStateObj.value;
+
+    var xmlHttpHandler = SFX_xmlHttpHandler = SFX_LoadXmlHttpHandler();
+    xmlHttpHandler.onreadystatechange = responseHandler;
+    
+    xmlHttpHandler.open("POST",SFX_callbackWebServiceUrl + methodName,true);
+    xmlHttpHandler.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlHttpHandler.send('id=' + context + '&viewState=' + viewState + '&action=' + action);
+}
+
+function SFX_OnCallbackWebServiceReady () 
+{
+    if (SFX_xmlHttpHandler.readyState == '4') {
+        if (SFX_xmlHttpHandler.status != 200) {
+            alert('Web Service Error: ' + SFX_xmlHttpHandler.statusText);
+            SFX_processing = false;
+            return;
+        }
+        
+        SFX_ProcessWebServiceResponse(SFX_xmlHttpHandler.responseXML);
+        SFX_xmlHttpHandler = null;
+    }
+}
+
+function SFX_ProcessWebServiceResponse (responseXml, actionMethod)
+{
+    var returnValue = '';// Mozilla splits response into several nodes
+    for (i = 0; i < responseXml.documentElement.childNodes.length; i++)
+        returnValue += responseXml.documentElement.childNodes[i].data;
+
+    SFX_OnCallbackReady(returnValue,'',actionMethod);
+}
+
+function SFX_LoadXmlHttpHandler ()
+{
+    var xmlHttpHandler = null;
+    try {
+        xmlHttpHandler = new ActiveXObject('Msxml2.XMLHTTP');
+    } catch (e) { }
+
+    if (xmlHttpHandler == null) {
+        try {
+          xmlHttpHandler = new ActiveXObject('Microsoft.XMLHTTP');
+        } catch (e) { }
+    }
+
+    // Gecko / Mozilla / Firefox
+    if ((xmlHttpHandler == null) && (typeof(XMLHttpRequest) != 'undefined'))
+        xmlHttpHandler = new XMLHttpRequest();
+        
+    return xmlHttpHandler;
+}
+
+// Client-Side commands
+
+function SFX_PrintDialog (id) 
+{
+	SFX_ClearLayers();
+	SFX_PrintImage(SFX_currentChartName);
+
+    /*
+	var chartImage = MM_findObj(SFX_currentChartName);
+	SFX_ClearLayers();
+	document.execCommand("Print",true,chartImage);
+	*/
+}
+
+function SFX_PrintImage (imgId) 
+{
+	var chartImage = MM_findObj(SFX_currentChartName);
+    var imgSrc = chartImage.src;
+    
+    var w = window.open ('', '_blank', 
+       'menubar=0,location=0,status=0,resizable=0,scrollbars=0,titlebar=0,status=0,toolbar=0,linkbar=0,width=1,height=1');
+    var html = '<HEAD><TITLE>Chart</TITLE></HEAD><HTML><BODY ONLOAD="if (window.print) { setTimeout(\'window.close()\', 1); window.print(); }">';
+    html += '<IMG SRC="' + imgSrc + '">';
+    html += '<\/BODY><\/HTML>';
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+}
+
+function SFX_Print (id) 
+{
+	SFX_ClearLayers();
+	SFX_PrintImage(SFX_currentChartName);
+}
+
+function SFX_CopyBitmap (id) 
+{
+    if (window.clipboardData) {
+		// If I take out this alert it doesn't work !
+		alert("The Chart image is in the clipboard.","Notification");
+		var chartImage = MM_findObj(SFX_currentChartName);
+		var oRng=document.body.createControlRange();
+		oRng.addElement(chartImage);
+		oRng.execCommand("Copy");
+    } else
+		alert('Sorry, your browser does not support this feature.');
+	SFX_ClearLayers();
+}
+
+function SFX_CopyMetafile (id) 
+{
+    alert('Copy Metafile: Not Implemented');
+	SFX_ClearLayers();
+}
+
+function SFX_CopyData (id) 
+{
+    SFX_SendCommand(SPECIAL_COMMAND_PREFIX + SPECIAL_COMMAND_EXPORTDATA);
+}
+
+var SFX_fontFamily;
+var SFX_fontSize;
+var SFX_fontIsBold;
+var SFX_fontIsItalic;
+var SFX_fontIsUnderline;
+
+function SFX_ShowFontDialog (id) 
+{
+	SFX_ClearLayers();
+	
+	fontFamily = "Arial";
+	fontSize = 8;
+	isBold = false;
+	isItalic = false;
+	isUnderline = false;
+
+	SFX_fontFamily = fontFamily;
+	SFX_fontSize = fontSize;
+	SFX_fontIsBold = isBold;
+	SFX_fontIsItalic = isItalic;
+	SFX_fontIsUnderline = isUnderline;
+
+	var windowDialog = window.open(SFX_fontDialog,null,'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=300,height=200');
+}
+
+function SFX_ReturnFromFontDialog (fontFamily, fontSize, isBold, isItalic, isUnderline) 
+{
+    SFX_SendCommand(SPECIAL_COMMAND_PREFIX + SPECIAL_COMMAND_SETFONT + fontFamily + SUBCOMMAND_SEPARATOR + fontSize + SUBCOMMAND_SEPARATOR + isBold + SUBCOMMAND_SEPARATOR + isItalic + SUBCOMMAND_SEPARATOR + isUnderline);
+}

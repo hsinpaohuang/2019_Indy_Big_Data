@@ -1,0 +1,146 @@
+html {
+	background-color: #fff;
+}
+body {
+	text-align: left;
+	min-width: 0;
+	background-color: #fff;
+}
+#doc3 {
+	min-width: 0;
+}
+
+#cb_header, #cb_footer, #aff-banner, #aff-global-menu,
+#aff-tools-menu, #pagetitle, #pageinstr, .actionbar,
+#floating-thead, #tabletools_right_edge, #breadcrumb, #results-nav,
+#back-to-search-results {
+	display: none;
+}
+.tabletoolslegend {
+	margin-bottom: 3em;
+}
+#table_modified_disclaimer_print {
+	display: block;
+}
+#viewport_hcontrols_right, #viewport_vcontrols_bottom {
+	display: none;
+}
+#viewport_hcontrols_left img, #viewport_hcontrols_left a,
+#viewport_vcontrols_top img, #viewport_vcontrols_top a {
+	display: none;
+}
+#cb_printheader, #cb_printfooter {
+	display: block;
+}
+
+.table-title {
+	margin-bottom: 16px;
+}
+.product-geo-print {
+	display: block;
+	font-size: 100%;
+	font-weight: bold;
+	color: #4e4b47;
+	margin-top: 2px;
+}
+.product-geo, #product-name a  {
+	display: none;
+}
+.table-name img {
+	display: none;
+}
+.contentwell {
+	background-image: none;
+	border: none;
+	background-color: #ffffff;
+}
+
+.result-container-hd {
+	display: none;
+}
+.result-container-bd {
+	background-color: #fff;
+	background-image: none;
+	position: static;
+	margin: auto;
+	z-index: auto;
+	border: none;
+}
+.result-container-bd .ls {
+	display: none;
+}
+.result-container-ft {
+	display: none;
+}
+
+#result-container {
+	margin: 8px 8px;
+}
+
+.metastub, .metaboxhead, .boxhead {
+	background-color: #ddd;
+}
+
+.stub, .field {
+	border-top: solid 1px #aaa;
+	border-bottom: solid 1px #aaa;
+}
+.metastub.br-edge.bottom, .boxhead.br-edge.bottom {
+	border-bottom: solid 1px #aaa;
+}
+
+.stat-tbl a {
+	color: #222;
+	text-decoration: none;
+}
+
+#aff-footer div {
+	display: none;
+}
+
+#headnotes, #footnotes {
+	display: block;
+}
+.headnote a, .footnote a {
+	text-decoration: none;
+}
+
+.pagebreak {
+	page-break-before: always;
+	margin: 0;
+}
+
+
+.gray-rule {
+	display: none;
+}
+
+#resulttabs .yui-nav  {
+	display: none;
+}
+
+
+#cb_footer div {
+	visibility: hidden;
+}
+
+#universe a {
+	display: none;
+}
+
+/* the following (and maybe other styles) override the ie6hacks.css
+ * things that make floating column headers work
+ */
+#zip {
+	position: static;
+	overflow: visible;
+}
+html, body {
+	height: auto;
+	overflow: visible;
+}
+
+.scrollableContainer {
+	overflow: visible;
+	max-height: none;
+}

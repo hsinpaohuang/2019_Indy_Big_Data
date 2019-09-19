@@ -1,0 +1,498 @@
+/** /map/libs/angular-color-picker/angular-color-picker.css **/
+.angular-color-picker {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    display: inline-block;
+}
+.angular-color-picker > ._variations {
+    border: 1px solid #808080;
+    width: 200px;
+    height: 200px;
+    float: left;
+    transition: background-color 250ms;
+}
+.angular-color-picker > ._variations > ._whites {
+    width: 200px;
+    height: 200px;
+    background: -webkit-linear-gradient(left, #fff 0, transparent 100%);
+    background: -moz-linear-gradient(left, #fff 0, transparent 100%);
+    background: -ms-linear-gradient(left, #fff 0, transparent 100%);
+    background: linear-gradient(left, #fff 0, transparent 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#00ffffff', GradientType='1');
+}
+.angular-color-picker > ._variations > ._whites > ._blacks {
+    width: 200px;
+    height: 200px;
+    background: -webkit-linear-gradient(top, transparent 0, #000 100%);
+    background: -moz-linear-gradient(top, transparent 0, #000 100%);
+    background: -ms-linear-gradient(top, transparent 0, #000 100%);
+    background: linear-gradient(top, transparent 0, #000 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#ff000000');
+    position: relative;
+}
+.angular-color-picker > ._variations > ._whites > ._blacks > ._cursor {
+    position: absolute;
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border: 1px solid #fff;
+    border-right-color: #000;
+    border-left-color: #000;
+    border-radius: 5px;
+}
+.angular-color-picker > ._variations > ._whites > ._blacks > ._mouse-trap {
+    width: 200px;
+    height: 200px;
+}
+.angular-color-picker > ._hues {
+    border: 1px solid #808080;
+    position: relative;
+    margin-left: 210px;
+    height: 200px;
+    width: 30px;
+    background: -webkit-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -moz-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: -ms-linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    background: linear-gradient(top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+}
+.angular-color-picker > ._hues > ._cursor {
+    position: absolute;
+    left: -7px;
+    width: 33px;
+    height: 0;
+    border: 5px solid transparent;
+    border-left-color: #808080;
+    border-right-color: #808080;
+}
+.angular-color-picker > ._hues > ._mouse-trap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 200px;
+}
+/* Heavily based on: http://jsfiddle.net/bgrins/Whc6Z/ */
+.angular-color-picker > ._hues > ._ie-1 {
+    height: 17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0000', endColorstr='#ffff00');
+}
+.angular-color-picker > ._hues > ._ie-2 {
+    height: 16%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffff00', endColorstr='#00ff00');
+}
+.angular-color-picker > ._hues > ._ie-3 {
+    height: 17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ff00', endColorstr='#00ffff');
+}
+.angular-color-picker > ._hues > ._ie-4 {
+    height: 17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffff', endColorstr='#0000ff');
+}
+.angular-color-picker > ._hues > ._ie-5 {
+    height: 16%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0000ff', endColorstr='#ff00ff');
+}
+.angular-color-picker > ._hues > ._ie-6 {
+    height: 17%;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff00ff', endColorstr='#ff0000');
+}
+
+/** /map/js/color-picker/color.picker.css **/
+#eus-color-picker-swatch {
+  border:1px solid #888;
+  height:60px;
+  right:20px;
+  position:absolute;
+  top:40px;
+  width:55px;
+}
+.angular-color-picker {
+  border:none;
+  padding:0px;
+}
+/** /map/css/map.css **/
+#tab-map {
+	position:relative;
+	margin-top:-1px;
+}
+#tab_map_container #tab-map {
+	margin: -4px -7px;
+}
+.map-container {
+	clear:both;
+	position:relative;
+}
+.esriScalebar {
+	margin-right:70px;
+}
+.esriSimpleSlider {
+	background:url("/common/img/gray_transparent.png") repeat scroll 0 0 transparent;
+	color:#fff;
+}
+.esriSimpleSliderDecrementButton:hover, .esriSimpleSliderIncrementButton:hover {
+    background-color: #666;
+}
+.esriSimpleSliderDisabledButton, .esriSimpleSliderDisabledButton:active, .esriSimpleSliderDisabledButton:hover {
+    background-color:transparent;
+    color:#aaa;
+}
+
+.map-search {
+	position:absolute;
+	top:21px;
+	left:60px;
+}
+.map-search .arcgisSearch .searchGroup .searchInput,
+.arcgisSearch .searchBtn {
+	background-color:rgba(255,255,255,0.7);
+}
+.HomeButton .home {
+	position:absolute;
+	top:97px;
+	left: 20px;
+	border: 1px solid #57585a;
+}
+.LocateButton  .zoomLocateButton {
+	position:absolute;
+	top:137px;
+	left: 20px;
+	border: 1px solid #57585a;
+}
+.map-toolbar {
+	background:url("/common/img/gray_transparent.png") repeat scroll 0 0 transparent;
+	position:absolute;
+	top:21px;
+	right:0px;
+	width:35px; 
+}
+.map-toolbar a {
+	border:1px solid transparent;
+	display:inline-block;
+	padding:7px;
+	width:20px;
+	height:21px;
+}
+.map-toolbar a:hover {
+	background:url("/common/img/gray_transparent.png") repeat scroll 0 0 transparent;
+	border:1px solid #aaa;
+	cursor:pointer;
+}
+.map-toolbar a.selected {
+	background-color:#595959;
+	border:1px solid #8c8983;
+}
+.map-tool-container {
+	position:absolute;
+	background-color:#fff;
+	border:1px solid #808983;
+	min-width:207px;
+	min-height:77px;
+	right:40px;
+	top:21px;
+}
+.map-tool-container .hdr {
+	background-color:#ececec;
+	color:#333;
+	font-size:93%;
+	font-weight:bold;
+	height:20px;
+	padding:4px 6px 0 8px;
+}
+.map-tool-container .bdy {
+	color:#333;
+	font-size:87%;
+	padding:4px 6px 6px 8px;
+}
+.map-tool-container .bdy p {
+	margin:3px 0;
+}
+.map-tool-container-close {
+	float:right;
+	padding:3px;
+}
+a.map-tool-container-close:hover {
+	background-color:#fff;
+	cursor:pointer;
+}
+.map-tool-container-divider {
+    border-bottom: 1px solid #aaa;
+    margin: 10px 0;
+}
+.map-select-geo {
+	max-width: 200px;
+}
+.map-select-geo select {
+	width:188px;
+}
+.map-select-results {
+	margin:8px 0 3px;
+}
+.map-select-results ul {
+	margin-bottom:15px;
+	margin-top:15px;
+	max-height:200px;
+	max-width:300px;
+	overflow:auto;
+}
+
+.map-select-results a:hover { 
+	cursor:pointer;
+}
+
+.map-btn {
+	font-size:85%;
+	margin:6px 4px 4px 0;
+	text-align:right;
+}
+.map-draw-toolbar a {
+	display:inline-block;
+	margin-right:7px;
+}
+.map-draw-toolbar a:hover {
+	background-color:#eee;
+	cursor:pointer;
+}
+.map-draw-toolbar a.selected {
+	background-color:#ddd;
+}
+.basemap-gallery{
+	width:270px;
+	height:270px;
+	overflow:auto;
+	font-weight:bold;
+    margin:7px 4px 2px 3px;
+}
+.basemap-node {
+    float:left;
+    margin:5px 10px 0;
+    width:100px;
+}
+.basemap-node a:hover {
+	cursor:pointer;
+}
+.selected-basemap {
+	box-shadow:0 0 7px #0FF;
+}
+.map-boundaries {
+	width:400px;
+}
+.map-boundaries #map-boundary-column-headers div {
+	display:inline-block;
+	font-weight:bold;
+	margin-left:5px;
+	width:38px;
+}
+.map-boundaries #map-boundary-table {
+	border:1px solid #bbb;
+	margin-bottom:4px;
+	max-height:280px;
+	overflow:auto;
+}
+.map-boundaries table tr {
+	height:20px;
+	color:black;
+}
+.map-boundaries table tr.even {
+	background-color:#f4f4f4;
+}
+.map-boundaries table td {
+	padding:0 6px 0 12px;
+}
+.map-boundaries table .col1 {
+	width:27px;
+}
+.map-boundary-not-visible {
+	color:#bbb;
+}
+.map-legend {
+	margin-bottom:10px;
+}
+.map-legend h1 {
+	font-weight:bold;
+	font-size:100%;
+	margin:0;
+}
+.map-legend .esriLegendService {
+	padding-bottom:0px;
+}
+.esriLegendService > table {
+	display:none;
+}
+.esriLegendLayerLabel {
+	display:none;
+}
+.esriLegendLayer,
+.esriLegendLayer table {
+	border:0px;
+	margin:0
+}
+.markers{
+	width: 237px;
+	min-height: 177px;
+	overflow: scroll;
+}
+#markers-container{
+	width: 234px;
+}
+#markers-spacer{
+	min-height: 11px;
+}
+#markers-instruction{
+	margin: 3px 0;
+}
+#markers-toolbar{
+	min-width: 217px;
+	min-height: 37px;
+	margin: 7px 3 px 7px 7px;
+	display: block;
+}
+#marker-color-size{
+	font-weight:bold;
+}
+#marker-color-size td, #marker-text-row td{
+	padding-right:5px;
+}
+#marker-color-label{
+	font-weight:bold;
+}
+#marker-color {
+	display: inline;	
+}
+#marker-color:hover {
+	cursor:pointer;
+}
+#marker-color-span {
+	display:inline-block;
+    border:1px solid black;
+    height: 16px;
+    width:32px;
+}
+#marker-size-label{
+	font-weight:bold; 
+	padding-left:10px;
+}
+#marker-size-select{
+	font-size:12px; 
+}
+#marker-text-table{
+	height: 27px;
+}
+#marker-text-row{
+	height: 26px;
+}
+#marker-text-label{
+	font-weight:bold; 
+}
+#marker-buttons-table{
+	align:right;
+	padding-top:10px;
+	width:234px;
+}
+#marker-buttons-row{
+	align: right;
+	float: right;
+	width: 224px;
+}
+#marker-buttons-column1{
+	min-width: 11px;
+}
+#marker-buttons-column2{
+	float: right;
+	align: right;
+}
+#marker-buttons-column3{
+	float: right;
+	align: right;
+}
+#marker-undo-btn #marker-clear-all-btn{
+	float: right;
+	align: right;
+}
+#eus-thematic-map{
+	position:relative;
+	margin: 0px 0px;
+	min-height: 700px;
+	min-width: 600px;
+}
+#thematic-map {
+	position:relative;
+	margin: 0px 0px;
+	min-height: 700px;
+	min-width: 677px;
+}
+#thematic-map #map-container {
+	border-top: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+}
+.theme-name {
+	font-size:115%;
+	font-weight:bold;
+	margin:20px 10px 12px 20px;
+	color:#444;
+}
+.color-ramp {
+	margin:5px 0px;
+}
+.color-ramp .ramp-color {
+	padding:1px 8px;
+}
+.open1 {
+	width:15px; 
+	height:16px;
+	overflow:hidden;
+	background:url(../img/open_btn.gif) no-repeat 0 0;
+	padding:1px 9px;
+	margin-left:1px;
+}
+.open1:hover {
+	background-position:0 -25px;
+	background-color:transparent;
+	cursor:pointer;
+}
+.esriPopup .titlePane {
+	font-weight:bold;
+}
+#identify-content{
+	min-width: 177px;
+	min-height: 107px;	
+	overflow: auto;
+}
+.identify-item{
+  	font-size:97%;
+  	min-width: 177px;
+  	min-height: 11px;
+	margin-left: 4px;
+	padding:2px;
+}
+.identify-label{
+  	font-size:97%;
+  	font-weight:bold;
+  	min-height: 11px;
+	padding:1px;
+}
+.identify-name{
+  	font-size:97%;
+  	min-height: 11px;
+  	margin-left: 4px;
+	padding:1px;
+}
+.zoomTo{
+	display:none;
+}
+#map-us-zoom, #theme-map-us-zoom{
+	position:absolute;
+	bottom:7px;
+	right:87px;
+	font-size:87%;
+  	font-weight:bold;
+	padding:1px;
+}
+#geo-map-us-zoom{
+	position:absolute;
+	bottom:-12px;
+	right:77px;
+	font-size:87%;
+  	font-weight:bold;
+	padding:1px;
+}
