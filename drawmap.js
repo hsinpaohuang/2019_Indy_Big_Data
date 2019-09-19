@@ -11,7 +11,7 @@ var colorScale = d3.scaleThreshold()
 var xx,
 	nest = {};
 
-var width = 150,
+var width = 200,
 	height = 300;
 
 var svg = d3.select("#map-div")
