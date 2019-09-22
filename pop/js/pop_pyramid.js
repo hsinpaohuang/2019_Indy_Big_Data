@@ -121,7 +121,7 @@ function drawChart()
   var options = 
   {
     isStacked: true,
-    colors: ['#4A77FF', '#00AAFF', '#B37493', '#FF0037'],
+    colors: ['#3D5499', '#00AAFF', '#B37493', '#FF0037'],
     hAxis: 
     { 
       format:'long',
