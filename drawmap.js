@@ -16,7 +16,7 @@ var svg;
 function INmap(year)
 {
 	tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return '<strong>County: </strong> <span class="details">' + d.properties.NAME + '<br /></span> <strong>Percent population with bachelor\'s degree or higher: </strong><span class="details">' + d.properties.Percent + '%</span>'; });
-	d3.selectAll(".map").selectAll("*").remove();
+	d3.selectAll(".counties").selectAll("*").remove();
 	svg = d3.select("#map-div")
             .append("svg")
 	    .attr("class", "map")
@@ -65,7 +65,7 @@ function ready(error, countyMap)
 	var originalColor;
 
 	svg.append("g")
-		.attr("class", "countries")
+		.attr("class", "counties")
 		.selectAll("path")
 		.data(indyState.features)
 		.enter().append("path")
