@@ -90,6 +90,8 @@ function ready(error, countyMap)
 			});//onmouseout
   }//ready
 
+INmap(2017);
+
 //legend
 d3.select('body')
 .append('div')
