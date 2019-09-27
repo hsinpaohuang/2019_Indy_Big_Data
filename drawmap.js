@@ -96,6 +96,8 @@ INmap(2017);
 d3.select('#viz')
 .append('div')
 .attr('class', 'legend')
+.append('h3')
+.text('Percent of bachelor\'s degree or higher');
 
 d3.select('div.legend')
 .append('svg')
