@@ -16,12 +16,12 @@ var svg;
 function INmap(year)
 {
 	tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return '<strong>County: </strong> <span class="details">' + d.properties.NAME + '<br /></span> <strong>Percent bachelor\'s degree or higher: </strong><span class="details">' + d.properties.Percent + '%</span>'; });
-	d3.select("#map-div > svg > g").selectAll("*").remove();
+	d3.selectAll(".map").selectAll("*").remove();
 	svg = d3.select("#map-div")
             .append("svg")
-			.attr("class", "map")
+	    .attr("class", "map")
             .attr("width", width)
-			.attr("height", height);
+	    .attr("height", height);
 	svg.call(tip);
 	tip.direction('e');
 
@@ -93,11 +93,9 @@ function ready(error, countyMap)
 INmap(2017);
 
 //legend
-d3.select('body')
+d3.select('#viz')
 .append('div')
 .attr('class', 'legend')
-.append('h3')
-.text("Legend")
 
 d3.select('div.legend')
 .append('svg')
@@ -212,9 +210,3 @@ d3.select('div.legend')
 .attr('class', 'legend')
 .attr('id', 'twentykt')
 .text('50%+');
-
-//county info
-d3.select('body')
-.append('div')
-.attr('id', 'info')
-.append('p')
