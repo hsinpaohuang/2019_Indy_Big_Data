@@ -154,7 +154,7 @@ d3.select('div.legend')
 	.append('p')
 	.attr('class', 'legend')
 	.attr('id', 'fivekt')
-	.text('20% ~ 39%');
+	.text('20% ~ 29%');
 
 d3.select('div.legend')
 	.append('svg')
