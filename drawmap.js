@@ -16,7 +16,7 @@ var svg;
 function INmap(year)
 {
 	tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return '<strong>County: </strong> <span class="details">' + d.properties.NAME + '<br /></span> <strong>Percent population with bachelor\'s degree or higher: </strong><span class="details">' + d.properties.Percent + '%</span>'; });
-	d3.select("#map-div svg g.counties").selectAll("*").remove();
+	d3.select("#map-div svg").selectAll("*").remove();
 	svg = d3.select("#map-div")
             .append("svg")
 	    .attr("class", "map")
