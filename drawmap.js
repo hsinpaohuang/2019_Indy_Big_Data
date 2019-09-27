@@ -37,7 +37,6 @@ function INmap(year)
 
 function ready(error, countyMap)
 {
-	console.log(percent_data[0].Percent);
 	if (error) throw error;
 
 	for(var i = 0; i < 92; i++)
