@@ -3,10 +3,10 @@ var tip;
 var print;
 var percent_data = [];
 var data = d3.map();
-var colorScheme = d3.schemeReds[5];
+var colorScheme = d3.schemeReds[6];
 colorScheme.unshift("#eee")
 var colorScale = d3.scaleThreshold()
-    .domain([0, 10, 20, 30, 40, 50])
+    .domain([10, 20, 30, 40, 50])
 	.range(colorScheme);
 
 var width = 250,
