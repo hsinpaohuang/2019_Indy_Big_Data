@@ -193,7 +193,7 @@ pointer-events: none;
 
 .legend h3
 {
-  margin-bottom: 0;
+  margin-bottom: 0.25em;
 }
 
 .legend p
